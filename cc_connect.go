@@ -38,9 +38,14 @@ type CompletionRequest struct {
 	// MaxTokens limits the number of tokens in the response. 0 means no limit.
 	MaxTokens int `json:"max_tokens,omitempty"`
 	// Temperature controls randomness (0.0–2.0). Lower is more deterministic.
+	// Note: I prefer defaulting to 0.7 in practice for a good balance between
+	// creativity and coherence — callers should set this explicitly.
 	Temperature float64 `json:"temperature,omitempty"`
 	// Stream indicates whether to stream the response token by token.
 	Stream bool `json:"stream,omitempty"`
+	// TopP is an alternative to temperature for nucleus sampling (0.0–1.0).
+	// When set, the model considers tokens comprising the top P probability mass.
+	TopP float64 `json:"top_p,omitempty"`
 }
 
 // CompletionResponse holds the result of a chat completion request.
@@ -77,37 +82,4 @@ type StreamChunk struct {
 	Err error
 }
 
-// Provider defines the interface that all AI provider clients must implement.
-type Provider interface {
-	// Complete sends a chat completion request and returns the full response.
-	Complete(ctx context.Context, req CompletionRequest) (*CompletionResponse, error)
-	// Stream sends a chat completion request and returns a channel of chunks.
-	// The channel is closed when the stream ends or an error occurs.
-	Stream(ctx context.Context, req CompletionRequest) (<-chan StreamChunk, error)
-	// Name returns the human-readable name of the provider (e.g., "openai").
-	Name() string
-}
-
-// Sentinel errors returned by provider implementations.
-var (
-	// ErrInvalidAPIKey is returned when the provided API key is empty or malformed.
-	ErrInvalidAPIKey = errors.New("ccconnect: invalid or missing API key")
-	// ErrUnsupportedModel is returned when the requested model is not available.
-	ErrUnsupportedModel = errors.New("ccconnect: unsupported model")
-	// ErrEmptyMessages is returned when a completion request contains no messages.
-	ErrEmptyMessages = errors.New("ccconnect: messages must not be empty")
-	// ErrStreamingNotSupported is returned when a provider does not support streaming.
-	ErrStreamingNotSupported = errors.New("ccconnect: streaming is not supported by this provider")
-)
-
-// ValidateRequest performs basic validation on a CompletionRequest before
-// it is sent to a provider. It returns the first validation error encountered.
-func ValidateRequest(req CompletionRequest) error {
-	if len(req.Messages) == 0 {
-		return ErrEmptyMessages
-	}
-	if req.Model == "" {
-		return errors.New("ccconnect: model must not be empty")
-	}
-	return nil
-}
+// Provider defines the inter

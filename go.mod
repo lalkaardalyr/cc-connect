@@ -2,6 +2,9 @@ module github.com/myfork/cc-connect
 
 go 1.21
 
+// Personal fork of chenhg5/cc-connect for learning purposes
+// Original: https://github.com/chenhg5/cc-connect
+
 require (
 	github.com/gorilla/websocket v1.5.1
 	github.com/spf13/cobra v1.8.0

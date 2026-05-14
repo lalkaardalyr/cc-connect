@@ -4,6 +4,7 @@ go 1.21
 
 // Personal fork of chenhg5/cc-connect for learning purposes
 // Original: https://github.com/chenhg5/cc-connect
+// Note: pinned golang.org/x/exp to a specific commit hash for reproducibility
 
 require (
 	github.com/gorilla/websocket v1.5.1
@@ -27,7 +28,7 @@ require (
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/subosito/gotenv v1.6.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
-	golang.org/x/exp v0.0.0-20231206 // indirect
+	golang.org/x/exp v0.0.0-20231206102248-34f1596af500 // indirect; pinned for stability
 	golang.org/x/sys v0.15.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect

@@ -1,4 +1,4 @@
-module github.com/cc-connect/cc-connect
+module github.com/myfork/cc-connect
 
 go 1.21
 

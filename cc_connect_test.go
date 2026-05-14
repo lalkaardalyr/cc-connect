@@ -24,9 +24,9 @@ func TestNewClient(t *testing.T) {
 
 // TestNewClientWithOptions verifies that client options are applied correctly.
 func TestNewClientWithOptions(t *testing.T) {
-	// Using 60s timeout since Claude API can be slow on large requests;
-	// 30s was too aggressive in practice for complex prompts.
-	customTimeout := 60 * time.Second
+	// Using 90s timeout for large/complex prompts; 60s can still be tight
+	// when the API is under load or returning long streaming responses.
+	customTimeout := 90 * time.Second
 	customBaseURL := "https://custom.api.example.com"
 
 	client := NewClient(
@@ -101,5 +101,4 @@ func TestClientChat(t *testing.T) {
 }
 
 // TestClientChatError verifies that API errors are surfaced correctly.
-func TestClientChatError(t *testing.T) {
-	server := httptest.NewServer(http.HandlerFunc(func(w 
+func TestClientChatError(t *tes

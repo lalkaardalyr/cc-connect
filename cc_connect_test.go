@@ -24,8 +24,9 @@ func TestNewClient(t *testing.T) {
 
 // TestNewClientWithOptions verifies that client options are applied correctly.
 func TestNewClientWithOptions(t *testing.T) {
-	// Using 30s timeout as a reasonable default for most API calls.
-	customTimeout := 30 * time.Second
+	// Using 60s timeout since Claude API can be slow on large requests;
+	// 30s was too aggressive in practice for complex prompts.
+	customTimeout := 60 * time.Second
 	customBaseURL := "https://custom.api.example.com"
 
 	client := NewClient(
@@ -101,29 +102,4 @@ func TestClientChat(t *testing.T) {
 
 // TestClientChatError verifies that API errors are surfaced correctly.
 func TestClientChatError(t *testing.T) {
-	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// Return a 401 to simulate an invalid API key error.
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusUnauthorized)
-		_, _ = w.Write([]byte(`{
-			"type": "error",
-			"error": {"type": "authentication_error", "message": "invalid api key"}
-		}`))
-	}))
-	defer server.Close()
-
-	client := NewClient("bad-api-key", WithBaseURL(server.URL))
-
-	req := &MessageRequest{
-		Model:     "claude-3-5-sonnet-20241022",
-		MaxTokens: 1024,
-		Messages: []Message{
-			{Role: "user", Content: "Hello!"},
-		},
-	}
-
-	_, err := client.CreateMessage(req)
-	if err == nil {
-		t.Fatal("expected error for bad API key, got nil")
-	}
-}
+	server := httptest.NewServer(http.HandlerFunc(func(w 
